@@ -4,10 +4,8 @@
 
 # 目录
 
-- 前端框架
-  - vue
-  - react
-  - angular
-- 服务类
-  - express
-    - 跨域 及 options 请求
+- vue
+- react
+- angular
+- express
+  - cors-demo 跨域 及 options 请求
