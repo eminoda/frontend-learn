@@ -14,16 +14,23 @@
     <script src="./axios.min.js"></script>
     <script>
       axios
-        .post('http://127.0.0.1:3000/test/cors', {
-          headers: {
-            'content-type': 'application/json',
-          },
-        })
+        .post(
+          "http://127.0.0.1:3000/test/cors",
+          {},
+          {
+            headers: {
+              "content-type": "application/json",
+              abc: "123",
+            },
+            withCredentials: true,
+          }
+        )
         .then((data) => {
-          document.getElementById('error-msg').innerText = 'ok';
+          console.log(data.headers);
+          document.getElementById("error-msg").innerText = "ok";
         })
         .catch((err) => {
-          document.getElementById('error-msg').innerText = err.message;
+          document.getElementById("error-msg").innerText = err.message;
         });
       //   axios
       //     .get('http://127.0.0.1:3000/test/cors', {
