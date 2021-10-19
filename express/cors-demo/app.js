@@ -10,11 +10,11 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'content-type');
-    // res.setHeader('Content-Length', '0');
-    // res.setHeader('Vary', 'Origin');
-    res.status(204).end();
+    // // res.setHeader('Content-Length', '0');
+    // // res.setHeader('Vary', 'Origin');
+    res.status(200).end();
   } else {
-    // res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     next();
   }
 });
