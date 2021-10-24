@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>responseType-demo</title>
+  </head>
+  <body>
+    <div id="pic"></div>
+    <div id="error-msg"></div>
+    <script src="./axios.min.js"></script>
+    <script>
+      axios
+        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
+        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "blob" })
+        // .get("http://127.0.0.1:3000/image/google.png", {
+        //   responseType: "arraybuffer",
+        // })
+        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
+        .get("http://127.0.0.1:3000/image/google.png", { responseType: "document" })
+        .then((response) => {
+          var source = response.data;
+          console.log(source);
+          // text
+          if (typeof source == "string") {
+          } else if (source instanceof Blob) {
+            // blob
+            toObjectURLAsBlob(source);
+          } else if (source instanceof ArrayBuffer) {
+            // https://zh.javascript.info/arraybuffer-binary-arrays
+            // arraybuffer
+            var blob = arraybufferToBlob(source);
+            toObjectURLAsBlob(blob);
+          }
+        })
+        .catch((err) => {
+          document.getElementById("error-msg").innerText = err.message;
+        });
+
+      function stringToUint8Array(str) {
+        var arr = [];
+        for (var i = 0, j = str.length; i < j; ++i) {
+          arr.push(str.charCodeAt(i));
+        }
+
+        var tmpUint8Array = new Uint8Array(arr);
+        return tmpUint8Array;
+      }
+      function arraybufferToBlob(arraybuffer) {
+        var byteArray = new Uint8Array(arraybuffer);
+        // Binary large Object
+        return new Blob([arraybuffer], { type: "image/png" });
+      }
+      function toObjectURLAsBlob(blob) {
+        const objectURL = URL.createObjectURL(blob);
+        showToPage(objectURL);
+      }
+      function blobToImageSrc(source) {
+        const reader = new FileReader();
+        reader.readAsDataURL(source);
+        reader.onload = function (event) {
+          showToPage(URL.createObjectURL(source));
+        };
+      }
+
+      function showToPage(imageSource) {
+        var imageEl = document.createElement("img");
+        console.log(`image src: ${imageSource}`);
+        imageEl.src = imageSource;
+        document.getElementById("pic").appendChild(imageEl);
+      }
+    </script>
+  </body>
+</html>
