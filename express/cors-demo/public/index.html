@@ -14,36 +14,25 @@
     <script src="./axios.min.js"></script>
     <script>
       axios
-        .post(
-          "http://127.0.0.1:3000/test/cors",
+        .get(
+          'http://127.0.0.1:3000/test/cors',
           {},
           {
             headers: {
-              "content-type": "application/json",
-              abc: "123",
+              'rrr': 'text/plain',
+              abc: '123',
+              xyz: '123',
             },
             withCredentials: true,
           }
         )
         .then((data) => {
-          console.log(data.headers);
-          document.getElementById("error-msg").innerText = "ok";
+          console.log(data.headers.def);
+          document.getElementById('error-msg').innerText = 'ok';
         })
         .catch((err) => {
-          document.getElementById("error-msg").innerText = err.message;
+          document.getElementById('error-msg').innerText = err.message;
         });
-      //   axios
-      //     .get('http://127.0.0.1:3000/test/cors', {
-      //       headers: {
-      //         'content-type': 'application/json',
-      //       },
-      //     })
-      //     .then((data) => {
-      //       document.getElementById('error-msg').innerText = 'ok';
-      //     })
-      //     .catch((err) => {
-      //       document.getElementById('error-msg').innerText = err.message;
-      //     });
     </script>
   </body>
 </html>
