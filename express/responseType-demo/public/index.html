@@ -14,11 +14,10 @@
       axios
         // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
         // .get("http://127.0.0.1:3000/image/google.png", { responseType: "blob" })
-        // .get("http://127.0.0.1:3000/image/google.png", {
-        //   responseType: "arraybuffer",
-        // })
+        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "arraybuffer" })
         // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
-        .get("http://127.0.0.1:3000/image/google.png", { responseType: "document" })
+        // .get("http://127.0.0.1:3000/document", { responseType: "document" })
+        // .get("http://127.0.0.1:3000/health", { responseType: "json" })
         .then((response) => {
           var source = response.data;
           console.log(source);
@@ -29,29 +28,19 @@
             toObjectURLAsBlob(source);
           } else if (source instanceof ArrayBuffer) {
             // https://zh.javascript.info/arraybuffer-binary-arrays
-            // arraybuffer
-            var blob = arraybufferToBlob(source);
+            // 缓冲 arraybuffer 不等同于 array
+            // 视图
+            var blob = new Blob([arraybuffer], { type: "image/png" });
             toObjectURLAsBlob(blob);
+          } else if (source instanceof Document) {
+            // document
+            console.log(source.getElementById("test"));
           }
         })
         .catch((err) => {
           document.getElementById("error-msg").innerText = err.message;
         });
 
-      function stringToUint8Array(str) {
-        var arr = [];
-        for (var i = 0, j = str.length; i < j; ++i) {
-          arr.push(str.charCodeAt(i));
-        }
-
-        var tmpUint8Array = new Uint8Array(arr);
-        return tmpUint8Array;
-      }
-      function arraybufferToBlob(arraybuffer) {
-        var byteArray = new Uint8Array(arraybuffer);
-        // Binary large Object
-        return new Blob([arraybuffer], { type: "image/png" });
-      }
       function toObjectURLAsBlob(blob) {
         const objectURL = URL.createObjectURL(blob);
         showToPage(objectURL);
@@ -61,6 +50,9 @@
         reader.readAsDataURL(source);
         reader.onload = function (event) {
           showToPage(URL.createObjectURL(source));
+          setTimeout(() => {
+            URL.revokeObjectURL(source);
+          }, 3000);
         };
       }
 
@@ -69,6 +61,16 @@
         console.log(`image src: ${imageSource}`);
         imageEl.src = imageSource;
         document.getElementById("pic").appendChild(imageEl);
+      }
+
+      function stringToUint8Array(str) {
+        var arr = [];
+        for (var i = 0, j = str.length; i < j; ++i) {
+          arr.push(str.charCodeAt(i));
+        }
+
+        var tmpUint8Array = new Uint8Array(arr);
+        return tmpUint8Array;
       }
     </script>
   </body>

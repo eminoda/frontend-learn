@@ -4,7 +4,7 @@
   "description": "",
   "main": "bin/www",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev nodemon ./bin/www"
+    "dev": "cross-env NODE_ENV=dev nodemon ./bin/www -e html,js"
   },
   "author": "eminoda",
   "license": "MIT",
