@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/libs/index.css" />
+    <script src="/libs/vue.min.js"></script>
+    <script src="/libs/vant.min.js"></script>
+    <script src="/libs/socket.io.min.js"></script>
+    <title>socketio page</title>
+  </head>
+  <body>
+    <style>
+      .notice {
+        margin-top: 50px;
+      }
+      .van-notice-bar {
+        margin-bottom: 20px;
+      }
+    </style>
+    <div id="app">
+      <van-notify v-model="notify.show" :type="notify.type">
+        {{notify.message}}
+      </van-notify>
+      <div class="notice">
+        <van-notice-bar
+          wrapable
+          :color="item.type=='send'?'#1989fa':'#ed6a0c'"
+          :background="item.type=='send'?'#ecf9ff':'#fffbe8'"
+          :scrollable="false"
+          v-for="(item,index) in list"
+          :key="index"
+          :text="item.text"
+          :left-icon="item.isError?'cross':''"
+        />
+      </div>
+      <van-tabbar fixed>
+        <van-button block type="primary" @click="
+        
+        ">发送数据</van-button>
+      </van-tabbar>
+    </div>
+    <script src="/libs/index.js"></script>
+  </body>
+</html>
