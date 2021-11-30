@@ -11,35 +11,67 @@
     <div id="error-msg"></div>
     <script src="./axios.min.js"></script>
     <script>
+      const imageSrc = "http://127.0.0.1:3000/image/google.png";
       axios
-        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
-        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "blob" })
-        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "arraybuffer" })
-        // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
-        // .get("http://127.0.0.1:3000/document", { responseType: "document" })
-        // .get("http://127.0.0.1:3000/health", { responseType: "json" })
-        .then((response) => {
-          var source = response.data;
-          console.log(source);
-          // text
-          if (typeof source == "string") {
-          } else if (source instanceof Blob) {
-            // blob
-            toObjectURLAsBlob(source);
-          } else if (source instanceof ArrayBuffer) {
-            // https://zh.javascript.info/arraybuffer-binary-arrays
-            // 缓冲 arraybuffer 不等同于 array
-            // 视图
-            var blob = new Blob([arraybuffer], { type: "image/png" });
-            toObjectURLAsBlob(blob);
-          } else if (source instanceof Document) {
-            // document
-            console.log(source.getElementById("test"));
-          }
+        .get(imageSrc, {
+          responseType: "arraybuffer",
         })
-        .catch((err) => {
-          document.getElementById("error-msg").innerText = err.message;
+        .then((response) => {
+          const data = response.data;
+          console.log("arraybuffer:", data);
+          console.log(String.fromCharCode.apply(null, new Uint8Array(data)));
+          // var blob = new Blob([data], { type: "image/png" });
+          // toObjectURLAsBlob(blob);
         });
+      axios
+        .get(imageSrc, {
+          responseType: "text",
+        })
+        .then((response) => {
+          const data = response.data;
+          console.log("text:", data);
+        });
+
+      // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+      function str2ab(str) {
+        var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+          bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+      }
+      // axios
+      //   .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
+      //   // .get("http://127.0.0.1:3000/image/google.png", { responseType: "blob" })
+      //   // .get("http://127.0.0.1:3000/image/google.png", { responseType: "arraybuffer" })
+      //   // .get("http://127.0.0.1:3000/image/google.png", { responseType: "text" })
+      //   // .get("http://127.0.0.1:3000/document", { responseType: "document" })
+      //   // .get("http://127.0.0.1:3000/health", { responseType: "json" })
+      //   .then((response) => {
+      //     var source = response.data;
+      //     console.log(source);
+      //     // text
+      //     if (typeof source == "string") {
+      //       var blob = new Blob([source], { type: "image/png" });
+      //       toObjectURLAsBlob(blob);
+      //     } else if (source instanceof Blob) {
+      //       // blob
+      //       toObjectURLAsBlob(source);
+      //     } else if (source instanceof ArrayBuffer) {
+      //       // https://zh.javascript.info/arraybuffer-binary-arrays
+      //       // 缓冲 arraybuffer 不等同于 array
+      //       // 视图
+      //       var blob = new Blob([arraybuffer], { type: "image/png" });
+      //       toObjectURLAsBlob(blob);
+      //     } else if (source instanceof Document) {
+      //       // document
+      //       console.log(source.getElementById("test"));
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     document.getElementById("error-msg").innerText = err.message;
+      //   });
 
       function toObjectURLAsBlob(blob) {
         const objectURL = URL.createObjectURL(blob);
@@ -63,14 +95,12 @@
         document.getElementById("pic").appendChild(imageEl);
       }
 
-      function stringToUint8Array(str) {
-        var arr = [];
-        for (var i = 0, j = str.length; i < j; ++i) {
-          arr.push(str.charCodeAt(i));
-        }
-
-        var tmpUint8Array = new Uint8Array(arr);
-        return tmpUint8Array;
+      function stringToUint8Array(s) {
+        const str = encodeURIComponent(s);
+        const binstr = str.replace(/%([0-9A-F]{2})/g, (_, p1) => {
+          return String.fromCharCode("0x" + p1);
+        });
+        return new Uint8Array(binstr.split("").map((x) => x.charCodeAt(0)));
       }
     </script>
   </body>
