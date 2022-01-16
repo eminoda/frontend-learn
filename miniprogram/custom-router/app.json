@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/multiple-pages/page1/index",
+    "pages/multiple-pages/page2/index",
+    "pages/multiple-pages/page3/index",
+    "pages/multiple-pages/page4/index",
+    "pages/multiple-pages/page5/index",
+    "pages/multiple-pages/page6/index",
+    "pages/multiple-pages/page7/index",
+    "pages/multiple-pages/page8/index",
+    "pages/multiple-pages/page9/index",
+    "pages/multiple-pages/page10/index",
+    "pages/multiple-pages/page11/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Weixin",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
