@@ -10,8 +10,25 @@
     "pages/multiple-pages/page8/index",
     "pages/multiple-pages/page9/index",
     "pages/multiple-pages/page10/index",
-    "pages/multiple-pages/page11/index"
+    "pages/multiple-pages/page11/index",
+    "pages/webview/index",
+    "pages/middle/index"
   ],
+  "tabBar": {
+    "color": "#808080",
+    "selectedColor": "#cc3340",
+    "backgroundColor": "#ffff",
+    "position": "top",
+    "list": [{
+        "pagePath": "pages/multiple-pages/page1/index",
+        "text": "tabbar1"
+      },
+      {
+        "pagePath": "pages/multiple-pages/page11/index",
+        "text": "page11"
+      }
+    ]
+  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",

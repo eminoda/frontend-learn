@@ -1,0 +1,36 @@
+{
+  "setting": {},
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "page9",
+          "pathName": "pages/multiple-pages/page9/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "首页",
+          "pathName": "pages/multiple-pages/page1/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "tabbar1",
+          "pathName": "pages/tabbar/tabbar1/index",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  }
+}
