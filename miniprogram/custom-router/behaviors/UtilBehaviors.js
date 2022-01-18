@@ -3,6 +3,9 @@ import { getActivePage } from '../utils/util'
 
 module.exports = Behavior({
     methods: {
+        ready() {
+            console.log(13)
+        },
         getCurrentPage() {
             return getActivePage()
         },
@@ -11,9 +14,16 @@ module.exports = Behavior({
             return Number(pageParts[pageParts.length - 2].replace('page', ''))
         },
         toNext() {
+            // if (this.data.pageNumber + 1 > 10) {
+            //     wx.redirectTo({
+            //         url: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
+            //     })
+            //     return
+            // }
             // wx.navigateTo({
             //     url: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
             // })
+            // return;
             getApp().$router.push({
                 path: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
             })

@@ -12,20 +12,22 @@
     "pages/multiple-pages/page10/index",
     "pages/multiple-pages/page11/index",
     "pages/webview/index",
-    "pages/middle/index"
+    "pages/middle/index",
+    "pages/tabbar/tabbar2/index"
   ],
   "tabBar": {
     "color": "#808080",
     "selectedColor": "#cc3340",
     "backgroundColor": "#ffff",
     "position": "top",
-    "list": [{
+    "list": [
+      {
         "pagePath": "pages/multiple-pages/page1/index",
         "text": "tabbar1"
       },
       {
-        "pagePath": "pages/multiple-pages/page11/index",
-        "text": "page11"
+        "pagePath": "pages/tabbar/tabbar2/index",
+        "text": "tabbar2"
       }
     ]
   },
