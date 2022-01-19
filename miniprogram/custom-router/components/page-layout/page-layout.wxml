@@ -1,9 +1,15 @@
-<view>
+<view class="page-layout-wrap">
   <!-- <button bind:tap="toNext">跳转页面{{pageNumber+1}}</button> -->
-  <view>当前页面：{{page.route}}</view>
-  <view>
-    当前微信栈：
+  <view class="cell-item">
+    <view class="title">当前页面：</view>
+    <view>{{page.route}}</view>
+  </view>
+  <view class="cell-item">
+    <view class="title">当前微信栈：</view>
     <view wx:for="{{wxRouterStack}}" wx:key="index">{{item}}</view>
   </view>
-  <button type="primary" disabled="{{wxRouterStack.length>=10}}" bindtap="toNext">跳转下一页面</button>
+  <view class="button-wrap">
+    <button type="primary" disabled="{{wxRouterStack.length>=10}}" bindtap="toNext">原生跳转</button>
+    <button type="primary" disabled="{{wxRouterStack.length>=10}}" bindtap="toNextCustom" style="margin-left:10rpx">自定义跳转</button>
+  </view>
 </view>

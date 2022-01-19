@@ -25,6 +25,10 @@ Component({
       wx.navigateTo({
         url: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
       })
+    },
+    toNextCustom() {
+      const $router = getApp().$router
+      $router.push({ path: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index` })
     }
   },
 

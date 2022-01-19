@@ -1,1 +1,18 @@
 /* components/page-layout/page-layout.wxss */
+.page-layout-wrap {
+  padding: 20rpx;
+}
+
+.cell-item {
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.button-wrap {
+  display: flex;
+  justify-content: space-around;
+}

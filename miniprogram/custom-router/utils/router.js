@@ -3,7 +3,7 @@ class Router {
   constructor(options = {}) {
     this.isVueRouter = options.isVueRouter == false ? false : true
     this.tabbars = options.tabbars || []
-    this.MAX_LIMIT = 4
+    this.MAX_LIMIT = 10
     this.routerStack = []
     this.wxRouterStack = []
     this.middlePagePath = '/pages/middle/index'
