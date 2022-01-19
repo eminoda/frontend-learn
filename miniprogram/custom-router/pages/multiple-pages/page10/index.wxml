@@ -1,11 +1,3 @@
 <view>
-    <view>
-        当前第{{pageNumber}}个页面
-    </view>
-    <view>
-        <text wx:if="{{pageNumber==10}}">navigateTo:fail webview count limit exceed</text>
-        <button bind:tap="toNext">无法跳转{{pageNumber+1}}</button>
-
-        <button bind:tap="toWebview">跳转 webview</button>
-    </view>
+    <page-layout />
 </view>

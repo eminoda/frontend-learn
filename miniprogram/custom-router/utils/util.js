@@ -15,9 +15,5 @@ const formatNumber = n => {
 }
 
 module.exports = {
-  formatTime,
-  getActivePage: () => {
-    const pages = getCurrentPages()
-    return pages[pages.length - 1]
-  }
+  formatTime
 }

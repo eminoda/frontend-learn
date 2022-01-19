@@ -20,8 +20,7 @@
     "selectedColor": "#cc3340",
     "backgroundColor": "#ffff",
     "position": "top",
-    "list": [
-      {
+    "list": [{
         "pagePath": "pages/multiple-pages/page1/index",
         "text": "tabbar1"
       },
@@ -30,6 +29,9 @@
         "text": "tabbar2"
       }
     ]
+  },
+  "usingComponents": {
+    "page-layout": "/components/page-layout/page-layout"
   },
   "window": {
     "backgroundTextStyle": "light",

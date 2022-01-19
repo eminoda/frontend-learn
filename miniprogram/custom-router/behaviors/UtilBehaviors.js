@@ -1,5 +1,5 @@
 
-import { getActivePage } from '../utils/util'
+
 
 module.exports = Behavior({
     methods: {
@@ -7,7 +7,8 @@ module.exports = Behavior({
             console.log(13)
         },
         getCurrentPage() {
-            return getActivePage()
+            const pages = getCurrentPages()
+            return pages[pages.length - 1]
         },
         getPageNumber(page) {
             const pageParts = page.route.split('/')
