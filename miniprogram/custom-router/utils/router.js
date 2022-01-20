@@ -8,7 +8,6 @@ class Router {
     this.wxRouterStack = []
     this.middlePagePath = '/pages/middle/index'
     this.onWxRouterChange()
-    this.canRoute = false
   }
   onWxRouterChange(fn) {
     // 监听全局页面跳转
@@ -17,7 +16,6 @@ class Router {
         fn && fn(res)
         return;
       }
-      this.canRoute = true
       this.wxRouterStack = getCurrentPages().map(page => '/' + page.route)
       const { webviewId, openType, path } = res
       const activePath = this._getActivePath()
@@ -26,7 +24,11 @@ class Router {
         if (getCurrentPages().length > 0) {
           this.routerStack = [activePath]
         }
-      } else if (openType == 'navigateBack') {
+      }
+      else if (openType == 'switchTab') {
+        this.routerStack = [path]
+      }
+      else if (openType == 'navigateBack') {
         if (activePath !== this.middlePagePath) {
           this.routerStack.pop()
         }
@@ -104,31 +106,31 @@ class Router {
    * 2. 第 MAX_LIMIT 页面的返回
    */
   back(delta = 1) {
-    if (!this.canRoute) {
-      return false
+    if (this.routerStack.length <= 1) {
+      return;
     }
     delta = Math.abs(delta)
     // 至少保留1个页面栈
     delta = this.routerStack.length - delta <= 1 ? 1 : delta
-    // 移除当前页面
-    this.routerStack.splice(this.routerStack.length - delta, delta)
+
     const len = this.routerStack.length
-    const url = this.routerStack[len - 1]
+    const url = this.routerStack[len - 2]
+
     if (this._isTabBar(url)) {
       wx.switchTab({ url })
-    } else if (url == this.middlePagePath) {
-      // 跳转至中间页，自动再回退一级
-      this.back()
+      return;
+    }
+    if (url == this.middlePagePath) {
+      // 返回页自动处理
     } else if (len > this.MAX_LIMIT) {
       wx.redirectTo({ url })
     } else {
-      wx.navigateTo({ url })
+      // 返回时自动减去自定义堆栈
+      this.routerStack.splice(this.routerStack.length - delta + 1)
+      wx.navigateBack({ delta })
     }
   }
   push(route) {
-    if (!this.canRoute) {
-      return false
-    }
     let url = this.isVueRouter ? this._routeToWxUrl(route) : route
     // tabbar 页面重置页面栈，使用对应 api 跳转
     if (this._isTabBar(url)) {

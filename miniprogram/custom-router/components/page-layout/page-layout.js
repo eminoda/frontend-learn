@@ -14,22 +14,47 @@ Component({
    */
   data: {
     pageNumber: '',
-    page: ''
+    page: '',
+    delta: 1,
+    navigatorIndex: wx.getStorageSync('isCustomRouter'),
+    navigators: [
+      { label: '微信原生跳转', value: 0 },
+      { label: '自定义跳转', value: 1 }
+    ]
   },
 
   /**
    * 组件的方法列表
    */
   methods: {
-    toNext() {
-      wx.navigateTo({
-        url: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
-      })
+    changePicker(event) {
+      const navigatorIndex = this.data.navigators[event.detail.value].value
+      wx.setStorageSync('isCustomRouter', navigatorIndex == 1)
+      this.setData({ navigatorIndex })
     },
-    toNextCustom() {
-      const $router = getApp().$router
-      $router.push({ path: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index` })
-    }
+    toNext() {
+      if (wx.getStorageSync('isCustomRouter')) {
+        const $router = getApp().$router
+        $router.push({ path: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index` })
+      } else {
+        wx.navigateTo({
+          url: `/pages/multiple-pages/page${this.data.pageNumber + 1}/index`,
+        })
+      }
+    },
+    handleInput(event) {
+      this.setData({ delta: event.detail.value })
+    },
+    toBack() {
+      if (wx.getStorageSync('isCustomRouter')) {
+        const $router = getApp().$router
+        $router.back(this.data.delta)
+      } else {
+        wx.navigateBack({
+          delta: this.data.delta,
+        })
+      }
+    },
   },
 
   lifetimes: {

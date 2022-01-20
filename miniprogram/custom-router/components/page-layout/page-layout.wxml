@@ -1,21 +1,30 @@
 <view>
   <view class="page-layout-wrap">
     <!-- <button bind:tap="toNext">跳转页面{{pageNumber+1}}</button> -->
+    <view class="cell-item bg-box-wrap">
+      <input type="number" placeholder="上输入返回层级 delta" bindinput="handleInput" /> <button type="default" bindtap="toBack" size="mini">返回上一页面</button>
+    </view>
+
     <view class="cell-item">
       <view class="title">当前页面：</view>
       <view>{{page.route}}</view>
     </view>
-    <view class="title">微信页面栈（个数：{{wxRouterStack.length}}）</view>
-    <scroll-view class="cell-item cell-scroll" scroll-y>
+    <view class="cell-item" wx:if="{{navigatorIndex!=1}}">
+      <view class="title">微信页面栈（个数：{{wxRouterStack.length}}）</view>
       <view wx:for="{{wxRouterStack}}" wx:key="index">{{item}}</view>
-    </scroll-view>
-    <view class="title">自定义页面栈（个数：{{routerStack.length}}）</view>
-    <scroll-view class="cell-item cell-scroll" scroll-y>
+    </view>
+    <view class="cell-item" wx:if="{{navigatorIndex==1}}">
+      <view class="title">自定义页面栈（个数：{{routerStack.length}}）</view>
       <view wx:for="{{routerStack}}" wx:key="index">{{item}}</view>
-    </scroll-view>
+    </view>
   </view>
-  <view class="button-wrap">
-    <button type="primary" disabled="{{wxRouterStack.length>=10||routerStack.length>=10}}" bindtap="toNext">原生跳转</button>
-    <button type="{{(wxRouterStack.length>=10||routerStack.length>=10)?'warn':'primary'}}" disabled="{{routerStack.length>12}}" bindtap="toNextCustom" style="margin-left:20rpx">自定义跳转</button>
+  <view class="bottom-wrap">
+    <view class="tip"><text>{{navigatorIndex==1?'自定义跳转':'原生跳转'}}</text></view>
+    <view class="btn-box">
+      <picker mode="selector" header-text="选择跳转方式" value="{{navigatorIndex}}" range="{{navigators}}" range-key="label" bindchange="changePicker">
+        <button type="primary" bindtap="selectNavigator" disabled="{{wxRouterStack.length!=1}}">选择跳转方式</button>
+      </picker>
+      <button type="primary" bindtap="toNext" disabled="{{navigatorIndex==1?routerStack.length>=12:wxRouterStack.length>=10}}">跳转</button>
+    </view>
   </view>
 </view>
