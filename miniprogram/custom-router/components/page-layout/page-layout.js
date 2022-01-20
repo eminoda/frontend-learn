@@ -39,6 +39,7 @@ Component({
       const page = this.getCurrentPage()
       this.setData({
         wxRouterStack: $router.wxRouterStack,
+        routerStack: $router.routerStack,
         page,
         pageNumber: this.getPageNumber(page)
       })

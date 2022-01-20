@@ -1,15 +1,21 @@
-<view class="page-layout-wrap">
-  <!-- <button bind:tap="toNext">跳转页面{{pageNumber+1}}</button> -->
-  <view class="cell-item">
-    <view class="title">当前页面：</view>
-    <view>{{page.route}}</view>
-  </view>
-  <view class="cell-item">
-    <view class="title">当前微信栈：</view>
-    <view wx:for="{{wxRouterStack}}" wx:key="index">{{item}}</view>
+<view>
+  <view class="page-layout-wrap">
+    <!-- <button bind:tap="toNext">跳转页面{{pageNumber+1}}</button> -->
+    <view class="cell-item">
+      <view class="title">当前页面：</view>
+      <view>{{page.route}}</view>
+    </view>
+    <view class="title">微信页面栈（个数：{{wxRouterStack.length}}）</view>
+    <scroll-view class="cell-item cell-scroll" scroll-y>
+      <view wx:for="{{wxRouterStack}}" wx:key="index">{{item}}</view>
+    </scroll-view>
+    <view class="title">自定义页面栈（个数：{{routerStack.length}}）</view>
+    <scroll-view class="cell-item cell-scroll" scroll-y>
+      <view wx:for="{{routerStack}}" wx:key="index">{{item}}</view>
+    </scroll-view>
   </view>
   <view class="button-wrap">
-    <button type="primary" disabled="{{wxRouterStack.length>=10}}" bindtap="toNext">原生跳转</button>
-    <button type="primary" disabled="{{wxRouterStack.length>=10}}" bindtap="toNextCustom" style="margin-left:10rpx">自定义跳转</button>
+    <button type="primary" disabled="{{wxRouterStack.length>=10||routerStack.length>=10}}" bindtap="toNext">原生跳转</button>
+    <button type="{{(wxRouterStack.length>=10||routerStack.length>=10)?'warn':'primary'}}" disabled="{{routerStack.length>12}}" bindtap="toNextCustom" style="margin-left:20rpx">自定义跳转</button>
   </view>
 </view>

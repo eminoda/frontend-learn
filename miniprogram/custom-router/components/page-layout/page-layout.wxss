@@ -7,12 +7,22 @@
   margin-bottom: 20rpx;
 }
 
+.cell-scroll {
+  height: 400rpx;
+}
+
 .title {
   font-size: 30rpx;
   font-weight: 600;
 }
 
 .button-wrap {
+  position: absolute;
+  bottom: 3%;
+  width: 90%;
+  left: 0;
+  right: 0;
+  margin: auto;
   display: flex;
   justify-content: space-around;
 }

@@ -7,6 +7,7 @@ Page({
   data: {
     isBack: false,
     nextPath: '',
+    array12: Array.from({ length: 12 }),
   },
 
   /**
@@ -21,7 +22,7 @@ Page({
       })
     }
   },
-  
+
   /**
    * 生命周期函数--监听页面显示
    */

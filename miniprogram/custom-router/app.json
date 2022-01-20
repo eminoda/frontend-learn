@@ -13,7 +13,8 @@
     "pages/multiple-pages/page11/index",
     "pages/webview/index",
     "pages/middle/index",
-    "pages/tabbar/tabbar2/index"
+    "pages/tabbar/tabbar2/index",
+    "pages/multiple-pages/page12/index.js"
   ],
   "tabBar": {
     "color": "#808080",
@@ -26,7 +27,7 @@
       },
       {
         "pagePath": "pages/tabbar/tabbar2/index",
-        "text": "tabbar2"
+        "text": "测试页面栈清空"
       }
     ]
   },

@@ -29,6 +29,12 @@
           "pathName": "pages/tabbar/tabbar1/index",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "middle",
+          "pathName": "pages/middle/index",
+          "query": "",
+          "scene": null
         }
       ]
     }
