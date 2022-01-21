@@ -24,28 +24,6 @@
   font-weight: 600;
 }
 
-.bottom-wrap {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  width: 100%;
-  padding: 20rpx;
-  box-sizing: border-box;
-  box-shadow: 5rpx 5rpx 10rpx 1rpx #d2d2d2, -5rpx -5rpx 10rpx 1rpx #d2d2d2;
-}
 
-.tip {
-  color: #f00;
-  margin-bottom: 10rpx;
-}
 
-.btn-box {
-  display: flex;
-  justify-content: space-between;
-}
 
-picker {
-  margin-right: 20rpx;
-}
