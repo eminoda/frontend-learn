@@ -77,17 +77,19 @@ class Router {
     // 至少保留1个页面栈
     delta = this.routerStack.length - delta <= 1 ? 1 : delta
 
-    const backUrl = this.routerStack[this.routerStack.length - 2]
+    const backUrl = this.routerStack[this.routerStack.length - delta]
 
     if (this._isTabBar(backUrl)) {
       wx.switchTab({ url: backUrl })
-    } else if (this.routerStack.length > this.MAX_LIMIT) {
+    } else if (this.routerStack.length - delta > this.MAX_LIMIT) {
       // 大于页面栈的返回
       this._updateRouterStack(backUrl)
       wx.redirectTo({
         url: backUrl,
       })
     } else {
+      // TODO
+      // delta = getCurrentPages().length - this.routerStack.length - delta
       wx.navigateBack({ delta })
     }
 
