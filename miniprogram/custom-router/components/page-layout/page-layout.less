@@ -1,5 +1,31 @@
 .page-layout-wrap {
-  padding: 20rpx;
+  .cell-group {
+    padding: 20rpx;
+
+    .cell-item {
+      margin-bottom: 20rpx;
+    }
+  }
+
+  .shadow-box {
+    box-shadow: 5rpx 5rpx 10rpx 1rpx #d2d2d2, -5rpx -5rpx 10rpx 1rpx #d2d2d2;
+  }
+
+  .flex-box {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .tip {
+    color: #f00;
+    margin-bottom: 10rpx;
+  }
+
+  .title {
+    font-size: 30rpx;
+    font-weight: 600;
+  }
 
   .bottom-wrap {
     position: fixed;
@@ -10,20 +36,9 @@
     width: 100%;
     padding: 20rpx;
     box-sizing: border-box;
-    box-shadow: 5rpx 5rpx 10rpx 1rpx #d2d2d2, -5rpx -5rpx 10rpx 1rpx #d2d2d2;
-
-    .tip {
-      color: #f00;
-      margin-bottom: 10rpx;
-    }
 
     picker {
       margin-right: 20rpx;
-    }
-
-    .btn-box {
-      display: flex;
-      justify-content: space-between;
     }
   }
 }

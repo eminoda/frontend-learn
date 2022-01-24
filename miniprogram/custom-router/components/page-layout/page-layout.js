@@ -46,12 +46,13 @@ Component({
       this.setData({ delta: event.detail.value })
     },
     toBack() {
+      const delta = Number((this.data.delta || 0))
       if (wx.getStorageSync('isCustomRouter')) {
         const $router = getApp().$router
-        $router.back(this.data.delta)
+        $router.back(delta)
       } else {
         wx.navigateBack({
-          delta: this.data.delta,
+          delta: delta,
         })
       }
     },

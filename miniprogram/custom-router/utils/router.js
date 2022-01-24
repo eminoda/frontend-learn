@@ -27,10 +27,14 @@ class Router {
       }
       else if (openType == 'switchTab') {
         this.routerStack = [path]
-      }
-      else if (openType == 'navigateBack') {
-        if (activePath !== this.middlePagePath) {
-          this.routerStack.pop()
+      } else if (openType == 'navigateTo') {
+
+      } else {
+        debugger
+        if (openType == 'navigateBack') {
+          if (activePath !== this.middlePagePath) {
+            this.routerStack.pop()
+          }
         }
       }
       console.log('wx.' + openType, ': ', path)
@@ -123,9 +127,10 @@ class Router {
     if (url == this.middlePagePath) {
       // 返回页自动处理
     } else if (len > this.MAX_LIMIT) {
+      this.routerStack.splice(this.routerStack.length - delta)
       wx.redirectTo({ url })
     } else {
-      // 返回时自动减去自定义堆栈
+      // navigateBack 返回中，自动减去自定义页面栈数量
       this.routerStack.splice(this.routerStack.length - delta + 1)
       wx.navigateBack({ delta })
     }

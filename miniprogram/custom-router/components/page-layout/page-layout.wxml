@@ -1,10 +1,5 @@
-<view>
-  <view class="page-layout-wrap">
-    <!-- <button bind:tap="toNext">跳转页面{{pageNumber+1}}</button> -->
-    <view class="cell-item bg-box-wrap">
-      <input type="number" placeholder="上输入返回层级 delta" bindinput="handleInput" /> <button type="default" bindtap="toBack" size="mini">返回上一页面</button>
-    </view>
-
+<view class="page-layout-wrap">
+  <view class="cell-group">
     <view class="cell-item">
       <view class="title">当前页面：</view>
       <view>{{page.route}}</view>
@@ -18,9 +13,13 @@
       <view wx:for="{{routerStack}}" wx:key="index">{{item}}</view>
     </view>
   </view>
-  <view class="bottom-wrap">
+  <view class="bottom-wrap shadow-box">
+    <view class="flex-box" style="margin-bottom:20rpx;">
+      <input class="shadow-box" style="padding:10rpx;" type="number" placeholder="上输入返回层级 delta" bindinput="handleInput" />
+      <button type="default" bindtap="toBack" size="mini">返回上一页面</button>
+    </view>
     <view class="tip"><text>{{navigatorIndex==1?'自定义跳转':'原生跳转'}}</text></view>
-    <view class="btn-box">
+    <view class="flex-box">
       <picker mode="selector" header-text="选择跳转方式" value="{{navigatorIndex}}" range="{{navigators}}" range-key="label" bindchange="changePicker">
         <button type="primary" bindtap="selectNavigator" disabled="{{wxRouterStack.length!=1}}">选择跳转方式</button>
       </picker>

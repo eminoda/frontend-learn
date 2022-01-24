@@ -1,28 +1,5 @@
 /* components/page-layout/page-layout.wxss */
-.page-layout-wrap {
-  padding: 20rpx;
-}
 
-.cell-item {
-  margin-bottom: 20rpx;
-}
-
-.cell-scroll {
-  height: 400rpx;
-}
-
-.bg-box-wrap {
-  padding: 20rpx;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 5rpx 5rpx 10rpx 1rpx #d2d2d2, -5rpx -5rpx 10rpx 1rpx #d2d2d2;
-}
-
-.title {
-  font-size: 30rpx;
-  font-weight: 600;
-}
 
 
 
