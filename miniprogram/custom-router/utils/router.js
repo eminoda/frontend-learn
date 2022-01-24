@@ -29,13 +29,8 @@ class Router {
         this.routerStack = [path]
       } else if (openType == 'navigateTo') {
 
-      } else {
-        debugger
-        if (openType == 'navigateBack') {
-          if (activePath !== this.middlePagePath) {
-            this.routerStack.pop()
-          }
-        }
+      } else if (openType == 'navigateBack') {
+
       }
       console.log('wx.' + openType, ': ', path)
       console.log('wx页面栈:', this.wxRouterStack)
