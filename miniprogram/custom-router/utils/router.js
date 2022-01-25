@@ -3,11 +3,12 @@ class Router {
   constructor(options = {}) {
     this.isVueRouter = options.isVueRouter == false ? false : true
     this.tabbars = options.tabbars || []
-    this.MAX_LIMIT = 3
+    this.MAX_LIMIT = options.MAX_LIMIT || 10
     this.routerStack = []
     this.wxRouterStack = []
     this.middlePagePath = '/pages/middle/index'
     this.onWxRouterChange()
+    this.debug = options.debug == false ? false : true
   }
   onWxRouterChange(fn) {
     // 监听全局页面跳转
@@ -20,20 +21,18 @@ class Router {
       const { webviewId, openType, path } = res
       const activePath = this._getActivePath()
       // 程序初始加载时，设置首个页面
-      if (openType == 'appLaunch') {
-        if (getCurrentPages().length > 0) {
-          this.routerStack = [activePath]
-        }
-      }
-      else if (openType == 'switchTab') {
+      if (openType == 'appLaunch' || openType == 'switchTab') {
         this.routerStack = ['/' + path]
       } else if (openType == 'navigateTo') {
       } else if (openType == 'navigateBack') {
+        // 通过微信原生返回箭头的操作，手动更新页面栈
         this._updateRouterStack(activePath)
       }
-      console.log('wx.' + openType, ': ', path)
-      console.log('wx页面栈:', this.wxRouterStack)
-      console.log('js页面栈:', this.routerStack)
+      if (this.debug) {
+        console.log('wx.' + openType, ': ', path)
+        console.log('wx页面栈:', this.wxRouterStack)
+        console.log('js页面栈:', this.routerStack)
+      }
     })
   }
   _updateRouterStack(path) {
@@ -46,11 +45,6 @@ class Router {
 
     }
   }
-  /**
-   * 通过返回进入中间页后：
-   * 1. 页面栈 >= 微信页面栈限制时，当前微信页面栈为：MAX_LIMIT-1，空出一位置，使用 navigateTo
-   * 2. 反之，自动再返回一级
-   */
   handleMiddleRedirect(isBack) {
     const activePath = this._getActivePath()
     if (activePath != this.middlePagePath) {
@@ -59,9 +53,10 @@ class Router {
     if (!isBack) {
       throw new Error('中间页非返回状态')
     }
-    // 移除末页（返回起始页）
+    // 当前页面栈 > 微信页面栈限制时
     if (this.routerStack.length > this.MAX_LIMIT) {
       this.routerStack.pop()
+      // 当前微信页面栈为：MAX_LIMIT-1，空出一位置，使用 navigateTo
       wx.navigateTo({
         url: this.routerStack[this.routerStack.length - 1]
       })
@@ -75,46 +70,49 @@ class Router {
     }
     delta = Math.abs(delta)
     // 至少保留1个页面栈
-    delta = this.routerStack.length - delta <= 1 ? 1 : delta
+    delta = this.routerStack.length - delta < 1 ? 1 : delta
 
-    const backUrl = this.routerStack[this.routerStack.length - delta]
+    // 获取返回地址
+    const backUrl = this.routerStack[this.routerStack.length - delta - 1]
 
     if (this._isTabBar(backUrl)) {
       wx.switchTab({ url: backUrl })
-    } else if (this.routerStack.length - delta > this.MAX_LIMIT) {
-      // 大于页面栈的返回
+    } else if (this.routerStack.length - delta >= this.MAX_LIMIT) {
+      // backUrl 在最大页面栈之后
       this._updateRouterStack(backUrl)
       wx.redirectTo({
         url: backUrl,
       })
     } else {
-      // TODO
-      // delta = getCurrentPages().length - this.routerStack.length - delta
-      wx.navigateBack({ delta })
+      const overMaxCount = this.routerStack.length - this.MAX_LIMIT
+      this._updateRouterStack(backUrl)
+      if (overMaxCount > 0) {
+        delta = delta - overMaxCount
+        wx.navigateBack({
+          delta,
+        })
+      } else {
+        wx.navigateBack({ delta })
+      }
     }
-
   }
   push(route) {
     let url = this.isVueRouter ? this._routeToWxUrl(route) : route
-    // tabbar 页面重置页面栈，使用对应 api 跳转
     if (this._isTabBar(url)) {
       this.routerStack = [url]
       wx.switchTab({ url })
-      return
-    }
-    const len = this.routerStack.length;
-    let actionFn = 'navigateTo'
-    // 保存中间页
-    if (len + 1 == this.MAX_LIMIT - 1) {
-      this.routerStack.push(this.middlePagePath)
-      url = this.middlePagePath + '?url=' + encodeURIComponent(url)
     } else {
-      this.routerStack.push(url)
+      // 跳转中间页
+      if (this.routerStack.length == this.MAX_LIMIT - 2) {
+        this.routerStack.push(this.middlePagePath)
+        // 定义中转页参数
+        url = this.middlePagePath + '?url=' + encodeURIComponent(url)
+      } else {
+        this.routerStack.push(url)
+      }
+      const actionFn = this.routerStack.length > this.MAX_LIMIT ? 'redirectTo' : 'navigateTo'
+      wx[actionFn]({ url })
     }
-    if (this.routerStack.length > this.MAX_LIMIT) {
-      actionFn = 'redirectTo'
-    }
-    wx[actionFn]({ url })
   }
   /**
    * @description vue 路由转微信 url
