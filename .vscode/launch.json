@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "pwa-chrome",
+            "name": "file:///D:/project/frontend-learn/react/helloworld/cdn/index.html",
+            "request": "launch",
+            "url": "file:///D:/project/frontend-learn/react/helloworld/cdn/index.html"
+        }
+    ]
+}
