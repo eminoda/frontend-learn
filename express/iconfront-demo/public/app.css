@@ -1,0 +1,29 @@
+/* @charset "UTF-8"; */
+@font-face {
+  font-family: element-icons;
+  src: url(/fonts/element-icons.woff) format('woff');
+  font-weight: 400;
+  font-display: 'auto';
+  font-style: normal;
+}
+
+[class*=' el-icon-'],
+[class^='el-icon-'] {
+  font-family: element-icons !important;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: baseline;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* .el-icon-edit:before {
+  content: "\e78c";
+} */
+.el-icon-edit:before {
+  content: '';
+}
