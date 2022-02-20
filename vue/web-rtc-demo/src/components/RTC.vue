@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- video -->
-    <video ref="videoRef" width="50%"></video>
+    <video ref="videoRef" width="30%" playsinline autoplay mute></video>
   </div>
 </template>
 
@@ -52,9 +52,11 @@ export default {
   },
   methods: {
     playVideo (mediaStream) {
+      console.log(mediaStream)
       var video = this.$refs.videoRef
       video.srcObject = mediaStream;
       video.onloadedmetadata = function () {
+        console.log(123)
         video.play();
       };
     }

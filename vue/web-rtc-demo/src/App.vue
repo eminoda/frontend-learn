@@ -1,8 +1,12 @@
 <template>
   <div id="app">
     <RTC @get-stream="handleStream" />
-    <Socket @answer-made="handleAddTransceiver" />
-    <video ref="videoRemoteRef" width="50%"></video>
+    <Socket
+      @answer-made="handleAddTransceiver"
+      ref="rtcRef"
+      @track="handleTrack"
+    />
+    <video ref="videoRemoteRef" width="50%" playsinline autoplay></video>
   </div>
 </template>
 
@@ -22,8 +26,20 @@ export default {
     }
   },
   methods: {
+    handleTrack (event) {
+      const remoteVideo = this.$refs.videoRemoteRef;
+      if (remoteVideo) {
+        remoteVideo.srcObject = event.streams[0];
+        remoteVideo.onloadedmetadata = function () {
+          remoteVideo.play();
+        };
+      }
+    },
     async handleStream (webcamStream) {
       this.webcamStream = webcamStream
+      if (this.webcamStream) {
+        this.$refs.rtcRef.createRTCPeerConn(this.webcamStream)
+      }
     },
     async handleAddTransceiver (myPeerConnection) {
       try {
@@ -34,24 +50,25 @@ export default {
             console.log('addTrack ok')
           }
         );
-        const remoteConnection = new RTCPeerConnection({
-          offerToReceiveAudio: true,
-          offerToReceiveVideo: true
-        });
-        myPeerConnection.onicecandidate = e => {
-          remoteConnection.addIceCandidate(e.candidate).then(() => {
-            console.log('addIceCandidate ok')
-          }).catch(err => {
-            console.log('addIceCandidate', err.message)
-          })
-        };
-        remoteConnection.addEventListener('track', function ({ streams: [stream] }) {
-          console.log('track', stream)
-          const remoteVideo = this.$refs.videoRemoteRef;
-          if (remoteVideo) {
-            remoteVideo.srcObject = stream;
-          }
-        });
+        // const remoteConnection = new RTCPeerConnection({
+        //   offerToReceiveAudio: true,
+        //   offerToReceiveVideo: true
+        // });
+        // myPeerConnection.onicecandidate = e => {
+        //   remoteConnection.addIceCandidate(e.candidate).then(() => {
+        //     console.log('addIceCandidate ok')
+        //   }).catch(err => {
+        //     console.log('addIceCandidate', err.message)
+        //   })
+        // };
+        // remoteConnection.addEventListener('track', function ({ streams: [stream] }) {
+        //   console.log('track', stream)
+        //   const remoteVideo = this.$refs.videoRemoteRef;
+        //   if (remoteVideo) {
+        //     remoteVideo.srcObject = stream;
+        //   }
+        // });
+        console.log(myPeerConnection)
       } catch (err) { console.log(err) }
     }
   }

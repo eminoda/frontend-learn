@@ -17,6 +17,7 @@ export default {
       users: [],
       socket: null,
       peerConnection: null,
+      remoteConnection: null,
       socketId: '',
     }
   },
@@ -34,10 +35,71 @@ export default {
       } catch (err) { console.log(err) }
       // this.$emit('call-user', { socket: this.socket, socketId, peerConnection: this.peerConnection })
     },
-    createRTCPeerConn () {
+    async TtestCall () {
+      // 创建本地多媒体 sdp (Session Description Protocol) 
+      const offer = await this.localCreateOffer()
+      await this.setLocalDesc(offer, this.peerConnection)
+      await this.setRemoteDesc(offer, this.remoteConnection)
+
+      // 远程应答
+      const answer = await this.remoteCreateAnswer();
+      await this.setLocalDesc(answer, this.remoteConnection)
+      await this.setRemoteDesc(answer, this.peerConnection)
+    },
+    async localCreateOffer () {
+      return this.peerConnection.createOffer()
+    },
+    async setLocalDesc (offer, p) {
+      return p.setLocalDescription(offer)
+    },
+    async setRemoteDesc (offer, p) {
+      return p.setRemoteDescription(offer)
+    },
+    async remoteCreateAnswer () {
+      return this.remoteConnection.createAnswer()
+    },
+    addTrack (stream) {
+      // 加载媒体流
+      stream.getTracks().forEach(
+        track => {
+          console.log('getTracks', stream)
+          this.peerConnection.addTrack(track, stream)
+        }
+      );
+    },
+    createRTCPeerConn (stream) {
       try {
+        console.log('创建 RTC')
         const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection
-        this.peerConnection = new RTCPeerConnection()
+        this.peerConnection = new RTCPeerConnection(null)
+        this.remoteConnection = new RTCPeerConnection(null);
+        // local
+        this.peerConnection.onicecandidate = event => {
+          this.remoteConnection.addIceCandidate(event.candidate).then(() => {
+            console.log('remote addIceCandidate ok')
+          }).catch(err => {
+            console.log('remote addIceCandidate [error]', err.message)
+          })
+        }
+        // remote
+        this.remoteConnection.onicecandidate = event => {
+          this.peerConnection.addIceCandidate(event.candidate).then(() => {
+            console.log('local addIceCandidate ok')
+          }).catch(err => {
+            console.log('local addIceCandidate [error]', err.message)
+          })
+        }
+        // this.peerConnection.oniceconnectionstatechange = event => {
+        //   console.log('local ice change', event)
+        // }
+        // this.remoteConnection.oniceconnectionstatechange = event => {
+        //   console.log('remote ice change', event)
+        // }
+        this.remoteConnection.ontrack = (event) => {
+          this.$emit('track', event)
+        };
+        this.addTrack(stream)
+        // this.TtestCall()
       } catch (err) {
         console.log(err.message)
       }
@@ -82,7 +144,6 @@ export default {
       );
       this.$emit('answer-made', this.peerConnection)
     });
-    this.createRTCPeerConn()
   }
 }
 </script>
