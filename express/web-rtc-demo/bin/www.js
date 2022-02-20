@@ -57,6 +57,15 @@ io.on("connection", (socket) => {
       answer: data.answer,
     });
   });
+  socket.on("new-ice-candidate", (data) => {
+    if (data.candidate) {
+      console.log(data.candidate)
+      socket.to(data.to).emit("candidate-done", {
+        socket: socket.id,
+        candidate: data.candidate,
+      });
+    }
+  });
 });
 
 /**

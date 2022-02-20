@@ -37,7 +37,7 @@ export default {
     const mediaDevices = navigator.mediaDevices
     // https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia#%E7%A4%BA%E4%BE%8B
     mediaDevices.getUserMedia({
-      audio: false,            // We want an audio track
+      audio: true,            // We want an audio track
       video: {
         aspectRatio: {
           ideal: 1.333333     // 3:2 aspect is preferred
@@ -55,10 +55,10 @@ export default {
       console.log(mediaStream)
       var video = this.$refs.videoRef
       video.srcObject = mediaStream;
-      video.onloadedmetadata = function () {
-        console.log(123)
-        video.play();
-      };
+      // video.onloadedmetadata = function () {
+      //   console.log(123)
+      //   video.play();
+      // };
     }
   }
 }

@@ -19,21 +19,20 @@ export default {
       peerConnection: null,
       remoteConnection: null,
       socketId: '',
+      toSocketID: ''
     }
   },
   methods: {
     async callUser (socketId) {
+      this.toSocketID = socketId
       try {
-        const { RTCSessionDescription } = window;
-        const offer = await this.peerConnection.createOffer();
-        await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-
+        const offer = await this.localCreateOffer()
+        await this.setLocalDesc(offer, this.peerConnection)
         this.socket.emit("call-user", {
           offer,
           to: socketId
         });
       } catch (err) { console.log(err) }
-      // this.$emit('call-user', { socket: this.socket, socketId, peerConnection: this.peerConnection })
     },
     async TtestCall () {
       // 创建本地多媒体 sdp (Session Description Protocol) 
@@ -50,13 +49,13 @@ export default {
       return this.peerConnection.createOffer()
     },
     async setLocalDesc (offer, p) {
-      return p.setLocalDescription(offer)
+      return p.setLocalDescription(new RTCSessionDescription(offer))
     },
     async setRemoteDesc (offer, p) {
-      return p.setRemoteDescription(offer)
+      return p.setRemoteDescription(new RTCSessionDescription(offer))
     },
     async remoteCreateAnswer () {
-      return this.remoteConnection.createAnswer()
+      return this.peerConnection.createAnswer()
     },
     addTrack (stream) {
       // 加载媒体流
@@ -71,31 +70,18 @@ export default {
       try {
         console.log('创建 RTC')
         const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection
-        this.peerConnection = new RTCPeerConnection(null)
-        this.remoteConnection = new RTCPeerConnection(null);
+        this.peerConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:stun.services.mozilla.com' }] })
+        // this.remoteConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:stun.services.mozilla.com' }] });
         // local
         this.peerConnection.onicecandidate = event => {
-          this.remoteConnection.addIceCandidate(event.candidate).then(() => {
-            console.log('remote addIceCandidate ok')
-          }).catch(err => {
-            console.log('remote addIceCandidate [error]', err.message)
-          })
+          if (event.candidate) {
+            this.socket.emit("new-ice-candidate", {
+              to: this.toSocketID,
+              candidate: event.candidate
+            });
+          }
         }
-        // remote
-        this.remoteConnection.onicecandidate = event => {
-          this.peerConnection.addIceCandidate(event.candidate).then(() => {
-            console.log('local addIceCandidate ok')
-          }).catch(err => {
-            console.log('local addIceCandidate [error]', err.message)
-          })
-        }
-        // this.peerConnection.oniceconnectionstatechange = event => {
-        //   console.log('local ice change', event)
-        // }
-        // this.remoteConnection.oniceconnectionstatechange = event => {
-        //   console.log('remote ice change', event)
-        // }
-        this.remoteConnection.ontrack = (event) => {
+        this.peerConnection.ontrack = (event) => {
           this.$emit('track', event)
         };
         this.addTrack(stream)
@@ -127,11 +113,11 @@ export default {
       }
     });
     this.socket.on("call-made", async data => {
-      this.peerConnection.setRemoteDescription(
-        new RTCSessionDescription(data.offer) //peerConnection.createOffer()
-      );
-      const answer = await this.peerConnection.createAnswer();
-      await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+      console.log('call-made', data.socket)
+      this.toSocketID = data.socket
+      await this.setRemoteDesc(data.offer, this.peerConnection)
+      const answer = await this.remoteCreateAnswer();
+      await this.setLocalDesc(answer, this.peerConnection)
 
       this.socket.emit("make-answer", {
         answer,
@@ -139,13 +125,20 @@ export default {
       });
     });
     this.socket.on("answer-made", async data => {
-      await this.peerConnection.setRemoteDescription(
-        new RTCSessionDescription(data.answer)
-      );
-      this.$emit('answer-made', this.peerConnection)
+      console.log('answer-made')
+      await this.setRemoteDesc(data.answer, this.peerConnection)
+      // this.$emit('answer-made', this.peerConnection)
     });
+    this.socket.on('candidate-done', async data => {
+      this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate)).then(() => {
+        console.log('remote addIceCandidate ok')
+      }).catch(err => {
+        console.log('remote addIceCandidate [error]', err.message)
+      })
+    })
   }
 }
+
 </script>
 
 <style>
