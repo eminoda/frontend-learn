@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <van-row justify="space-between" :gutter="10">
       <van-col span="10">
         <!-- 视频1 -->
@@ -10,16 +10,14 @@
         <video ref="videoRemoteRef" width="100%" playsinline autoplay></video>
       </van-col>
     </van-row>
+    <div>当前登录人 {{ userId }}</div>
     <div>
-      <van-cell
-        v-for="item in users"
-        :key="item"
-        :title="'socketId:' + item"
-        @click="callUser(item)"
-      >
-        <template #title>
-          <span style="margin-right:10px;">socketId:{{ item }}</span>
-          <van-tag type="primary" v-if="item == socketId">当前设备</van-tag>
+      <div>当前所有用户</div>
+      <van-cell v-for="item in userIds" :key="item" :title="item">
+        <template #right-icon>
+          <van-button @click="startCall(item)" :disabled="userId == item"
+            >呼叫他</van-button
+          >
         </template>
       </van-cell>
     </div>
@@ -29,142 +27,133 @@
 <script>
 import io from 'socket.io/client-dist/socket.io.js';
 import { getUserMedia, playVideo } from './utils'
-import { Dialog, Notify } from 'vant'
-// import Socket from './components/Socket'
+
 export default {
-  name: 'App',
-  components: {
-    // Socket
-  },
   data () {
     return {
-      socketId: '',
-      webcamStream: null,
+      userId: '',
+      userIds: [],
+      toUserId: '',
       socket: null,
-      users: [],
-      peerConnection: null,
-      toSocketID: ''
+      stream: ''
     }
   },
   methods: {
-    async handleStream (webcamStream) {
-      this.webcamStream = webcamStream
-      if (this.webcamStream) {
-        this.$refs.rtcRef.createRTCPeerConn(this.webcamStream)
-      }
-    },
-    usersListen () {
-      this.socket.on('current-user', ({ socketId }) => {
-        this.socketId = socketId
-      })
-      this.socket.on("update-user-list", ({ users }) => {
-        for (let i = 0; i < users.length; i++) {
-          if (!this.users.find(item => item == users[i])) {
-            this.users.push(users[i])
+    createSocketConnect () {
+      this.socket = io({ path: '/ws/socket.io' });
+      // this.peerConnectionListen(originStream)
+      this.socket.on('message', async ({ type, data }) => {
+        console.log('==>socket', type, data)
+        if (type == 'connection') {
+          this.userId = data.userId
+        } else if (type == 'update-user-list') {
+          for (let i = 0; i < data.userIds.length; i++) {
+            const userId = data.userIds[i]
+            if (!this.userIds.find(item => item == userId)) {
+              this.userIds.push(userId)
+            }
           }
-        }
-      });
-      this.socket.on("remove-user", ({ socketId }) => {
-        for (let i = 0; i < this.users.length; i++) {
-          if (socketId == this.users[i]) {
-            this.users.splice(i, 1);
+        } else if (type == 'remove-user') {
+          for (let i = 0; i < this.userIds.length; i++) {
+            if (data.userId == this.userIds[i]) {
+              this.users.splice(i, 1);
+            }
           }
-        }
-      });
-      this.socket.on("call-made", async data => {
-        Notify({ type: 'success', message: '收到呼叫 ok' });
-        this.toSocketID = data.socket
-        await this.setRemoteDesc(data.offer, this.peerConnection)
-        const answer = await this.remoteCreateAnswer();
-        await this.setLocalDesc(answer, this.peerConnection)
-        this.socket.emit("make-answer", {
-          answer,
-          to: data.socket
-        });
-        Notify({ type: 'primary', message: '发起应答' });
-      });
-      this.socket.on("answer-made", async data => {
-        await this.setRemoteDesc(data.answer, this.peerConnection)
-        Notify({ type: 'success', message: '收到应答' });
-      });
-      this.socket.on('candidate-done', async data => {
-        console.log(11111111111)
-        await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
-      })
-    },
-    peerConnectionListen (stream) {
-      const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection
-      this.peerConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:stun.services.mozilla.com' }] })
-      // this.peerConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:stun.services.mozilla.com' }, { 'url': 'stun:stunserver.org' }, { 'url': 'stun:stun.l.google.com:19302' }] })
-      this.peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          Notify({ type: 'primary', message: '创建 candidate' });
-          this.socket.emit("new-ice-candidate", {
-            to: this.toSocketID,
-            candidate: event.candidate
-          });
-        }
-      }
-      this.peerConnection.ontrack = (event) => {
-        console.log(event)
-        Notify({ type: 'success', message: 'ontrack' });
-        console.log(event.streams[0], this.$refs.videoRemoteRef)
-        playVideo(event.streams[0], this.$refs.videoRemoteRef)
-      };
-      this.addTrack(stream)
-    },
-    async callUser (socketId) {
-      if (socketId == this.socketId) {
-        Dialog({ message: '请选择其他 socketId' });
-        return
-      }
-      this.toSocketID = socketId
-      try {
-        const offer = await this.localCreateOffer()
-        await this.setLocalDesc(offer, this.peerConnection)
-        this.socket.emit("call-user", {
-          offer,
-          to: socketId
-        });
-        Notify({ type: 'primary', message: '发起呼叫 ' + socketId });
-      } catch (err) { console.log(err) }
-    },
-    async localCreateOffer () {
-      return this.peerConnection.createOffer()
-    },
-    async setLocalDesc (offer, p) {
-      return p.setLocalDescription(new RTCSessionDescription(offer))
-    },
-    async setRemoteDesc (offer, p) {
-      return p.setRemoteDescription(new RTCSessionDescription(offer))
-    },
-    async remoteCreateAnswer () {
-      return this.peerConnection.createAnswer()
-    },
-    addTrack (stream) {
-      // 加载媒体流
-      stream.getTracks().forEach(
-        track => {
-          this.peerConnection.addTrack(track, stream)
-        }
-      );
-    },
-  },
-  async mounted () {
-    const originStream = await getUserMedia({ audio: false })
-    playVideo(originStream, this.$refs.videoRef)
+        } else if (type == 'call-made') {
+          // this.peerConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:global.stun.twilio.com:3478?transport=udp' }] })
 
-    this.socket = io(location.host, { path: '/ws/socket.io' });
-    this.usersListen()
-    this.peerConnectionListen(originStream)
+
+          // this.peerConnection.onicecandidate = (event) => {
+          //   console.log('remote onicecandidate');
+          //   if (event.candidate) {
+          //     this.socket.emit("message", {
+          //       type: 'new-ice-candidate',
+          //       data: {
+          //         to: data.from,
+          //         candidate: event.candidate
+          //       }
+          //     });
+          //   }
+          // }
+          this.toUserId = data.from
+          const { offer } = data
+          console.log('set remote desc offer')
+          await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+          console.log('create answer')
+          const answer = await this.peerConnection.createAnswer()
+          console.log('set local desc answer')
+          await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer))
+          this.socket.emit("message", {
+            type: 'make-answer',
+            data: {
+              answer,
+              to: data.from,
+              from: this.userId
+            }
+          });
+        } else if (type == "answer-made") {
+          console.log('set remote desc answer')
+          await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
+        } else if (type == 'candidate-done') {
+          console.log('candidate-done')
+          await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
+        }
+      })
+    },
+    async startCall (toUserId) {
+      this.toUserId = toUserId
+      this.createPeerConnection(toUserId)
+    },
+    async createPeerConnection (toUserId) {
+      console.log('创建 peerConnection')
+
+      // 开始创建连接
+      console.log('create offer')
+      const offer = await this.peerConnection.createOffer()
+      console.log('set local desc offer')
+      await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer))
+
+      this.socket.emit('message', {
+        type: 'call-user',
+        data: {
+          offer,
+          to: toUserId,
+          from: this.userId
+        }
+      })
+    }
+  },
+  async created () {
+    this.createSocketConnect()
+    this.stream = await getUserMedia({ audio: true })
+    playVideo(this.stream, this.$refs.videoRef)
+    this.peerConnection = new RTCPeerConnection({ 'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }] })
+    if (this.stream) {
+      console.log('添加多媒体流到 track')
+      this.stream.getTracks().forEach((track) => {
+        this.peerConnection.addTrack(track, this.stream)
+      })
+    }
+    // 定义 pc 事件
+    this.peerConnection.onicecandidate = (event) => {
+      console.log('onicecandidate', event.candidate);
+      if (event.candidate) {
+        this.socket.emit("message", {
+          type: 'new-ice-candidate',
+          data: {
+            to: this.toUserId,
+            candidate: event.candidate
+          }
+        });
+      }
+    }
+    this.peerConnection.ontrack = (event) => {
+      console.log('ontrack')
+      playVideo(event.streams[0], this.$refs.videoRemoteRef)
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 </style>

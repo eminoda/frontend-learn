@@ -17,56 +17,122 @@ const io = new Server(server);
 const onlineUsers = [];
 
 io.on("connection", (socket) => {
-  console.log(Date.now(), "有客户端接入...");
-  socket.emit("current-user", {
-    socketId: socket.id,
+  const userId = Date.now();
+  console.log("user", userId, "is comeing");
+  socket.emit("message", {
+    type: "connection",
+    data: {
+      userId,
+    },
   });
-  console.log(socket.id, "welcome");
-  const existUser = onlineUsers.find((item) => item == socket.id);
+  const existUser = onlineUsers.find((item) => item == userId);
   if (!existUser) {
-    onlineUsers.push(socket.id);
-    socket.emit("update-user-list", {
-      users: onlineUsers,
+    onlineUsers.push({ userId, socketId: socket.id });
+    socket.broadcast.emit("message", {
+      type: "update-user-list",
+      data: {
+        userIds: onlineUsers.map((item) => item.userId),
+      },
     });
-    socket.broadcast.emit("update-user-list", {
-      users: [socket.id],
+    socket.emit("message", {
+      type: "update-user-list",
+      data: {
+        userIds: onlineUsers.map((item) => item.userId),
+      },
     });
   }
   socket.on("disconnect", () => {
-    console.log(socket.id, "88");
     for (let i = 0; i < onlineUsers.length; i++) {
-      if (socket.id == onlineUsers[i]) {
+      const { userId, socketId } = onlineUsers[i];
+      if (socket.id == socketId) {
         onlineUsers.splice(i, 1);
       }
     }
     socket.broadcast.emit("remove-user", {
-      socketId: socket.id,
+      userId,
     });
   });
-  socket.on("call-user", (data) => {
-    console.log("--> 呼叫用户");
-    socket.to(data.to).emit("call-made", {
-      offer: data.offer,
-      socket: socket.id,
-    });
-  });
-  socket.on("make-answer", (data) => {
-    console.log("<-- 用户响应");
-    socket.to(data.to).emit("answer-made", {
-      socket: socket.id,
-      answer: data.answer,
-    });
-  });
-  socket.on("new-ice-candidate", (data) => {
-    if (data.candidate) {
-      console.log(data.candidate)
-      socket.to(data.to).emit("candidate-done", {
-        socket: socket.id,
-        candidate: data.candidate,
+  socket.on("message", ({ type, data }) => {
+    console.log({ type, from: data.from, to: data.to });
+    if (type == "call-user") {
+      const { socketId } = onlineUsers.find(({ userId }) => userId == data.to);
+      socket.to(socketId).emit("message", {
+        type: "call-made",
+        data: {
+          offer: data.offer,
+          from: data.from,
+        },
+      });
+    } else if (type == "make-answer") {
+      const { socketId } = onlineUsers.find(({ userId }) => userId == data.to);
+      socket.to(socketId).emit("message", {
+        type: "answer-made",
+        data: {
+          answer: data.answer
+        },
+      });
+    } else if (type == "new-ice-candidate") {
+      const { socketId } = onlineUsers.find(({ userId }) => userId == data.to);
+      socket.to(socketId).emit("message", {
+        type: "candidate-done",
+        data: {
+          candidate: data.candidate,
+        },
       });
     }
   });
 });
+// io.on("connection", (socket) => {
+//   console.log(Date.now(), "有客户端接入...");
+//   socket.emit("current-user", {
+//     socketId: socket.id,
+//   });
+//   console.log(socket.id, "welcome");
+//   const existUser = onlineUsers.find((item) => item == socket.id);
+//   if (!existUser) {
+//     onlineUsers.push(socket.id);
+//     socket.emit("update-user-list", {
+//       users: onlineUsers,
+//     });
+//     socket.broadcast.emit("update-user-list", {
+//       users: [socket.id],
+//     });
+//   }
+//   socket.on("disconnect", () => {
+//     console.log(socket.id, "88");
+//     for (let i = 0; i < onlineUsers.length; i++) {
+//       if (socket.id == onlineUsers[i]) {
+//         onlineUsers.splice(i, 1);
+//       }
+//     }
+//     socket.broadcast.emit("remove-user", {
+//       socketId: socket.id,
+//     });
+//   });
+//   socket.on("call-user", (data) => {
+//     console.log("--> 呼叫用户");
+//     socket.to(data.to).emit("call-made", {
+//       offer: data.offer,
+//       socket: socket.id,
+//     });
+//   });
+//   socket.on("make-answer", (data) => {
+//     console.log("<-- 用户响应");
+//     socket.to(data.to).emit("answer-made", {
+//       socket: socket.id,
+//       answer: data.answer,
+//     });
+//   });
+//   socket.on("new-ice-candidate", (data) => {
+//     if (data.candidate) {
+//       console.log(data.candidate)
+//       socket.to(data.to).emit("candidate-done", {
+//         socket: socket.id,
+//         candidate: data.candidate,
+//       });
+//     }
+//   });
+// });
 
 /**
  * Listen on provided port, on all network interfaces.
