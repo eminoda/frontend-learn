@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="/client-dist/socket.io.min.js"></script>
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
+	</head>
+	<body>
+		<div id="app">
+			<el-card title="当前登录人">
+				<el-table :data="onlineUsers">
+					<el-table-column prop="userId" label="用户id"> </el-table-column>
+					<el-table-column prop="socketId" label="socketId"> </el-table-column>
+					<el-table-column label="操作">
+						<template slot-scope="scope">
+							<el-button :disabled="scope.row.userId==currentId" type="danger" size="small" @click="toCall(scope.row)">call</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</el-card>
+			<div style="margin-top: 20px">
+				<el-button type="primary" @click="addUser">创建连接</el-button>
+			</div>
+			<div>
+				<video ref="sourceVideoRef" width="30%" playsinline autoplay mute></video>
+				<video ref="answerVideoRef" width="30%" playsinline autoplay mute></video>
+			</div>
+		</div>
+		<script crossorigin="anonymous" src="https://lib.baomitu.com/vue/2.6.14/vue.min.js"></script>
+		<!-- 引入组件库 -->
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<script src="./index.js"></script>
+	</body>
+</html>
