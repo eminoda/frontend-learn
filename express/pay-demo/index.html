@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var maximumBags = function (capacity, rocks, additionalRocks) {
+        let count = 0
+        var maxTomin = []
+        for (let i = 0; i < capacity.length; i++) {
+          const rest = capacity[i] - rocks[i]
+          if (rest > 0) {
+            maxTomin.push(rest)
+          } else {
+            count = count + 1
+          }
+        }
+        maxTomin = maxTomin.sort((a, b) => {
+          if (a > b) return 1
+          else if (a < b) return -1
+          else 0
+        })
+        console.log(maxTomin)
+
+        for (let i = 0; i < maxTomin.length; i++) {
+          const item = maxTomin[i]
+          if (additionalRocks >= item) {
+            count = count + 1
+
+            additionalRocks = additionalRocks - item
+          } else {
+            return count
+          }
+        }
+        return count
+      }
+      var capacity = [54, 18, 91, 49, 51, 45, 58, 54, 47, 91, 90, 20, 85, 20, 90, 49, 10, 84, 59, 29, 40, 9, 100, 1, 64, 71, 30, 46, 91]
+
+      var rocks = [14, 13, 16, 44, 8, 20, 51, 15, 46, 76, 51, 20, 77, 13, 14, 35, 6, 34, 34, 13, 3, 8, 1, 1, 61, 5, 2, 15, 18]
+      // 5 5 10
+      var additionalRocks = 77
+      const result = maximumBags(capacity, rocks, additionalRocks)
+      console.log(result)
+    </script>
+  </body>
+</html>
