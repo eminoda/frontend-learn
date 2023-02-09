@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .frame-wrap {
+        display: flex;
+        justify-content: flex-start;
+      }
+      .frame-menu {
+        width: 200px;
+        border: 1px solid rgb(106, 102, 102);
+        text-align: center;
+      }
+      .menu-item {
+        padding: 20px;
+        cursor: pointer;
+      }
+      .frame-main {
+        flex: 1;
+        border: 1px solid rgb(106, 102, 102);
+        height: 100vh;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame-wrap">
+      <div class="frame-menu">
+        <div class="menu-item" onclick="handleMenu('A')">A</div>
+        <div class="menu-item" onclick="handleMenu('B')">B</div>
+        <div class="menu-item" onclick="handleMenu('C')">父子通讯</div>
+        <div class="menu-item" onclick="handleMenu('D')">D</div>
+      </div>
+      <div class="frame-main">
+        <iframe src="a.html" frameborder="0" name="subWin" onload="pageLoad()"></iframe>
+      </div>
+    </div>
+
+    <script>
+      var currentWin = ''
+      function onChildMsg(data) {
+        console.log(data)
+      }
+      function pageLoad() {
+        console.log('iframe load')
+        if (currentWin == 'C') {
+          // 一般方式
+          // subWin.onParentMsg('123')
+          // postMessage
+          subWin.postMessage('123', '*')
+        }
+      }
+      window.addEventListener('message', function (event) {
+        console.log(event)
+        console.log('接收子框架数据', event.data)
+      })
+      function handleMenu(menu) {
+        currentWin = menu
+        let subUrl = ''
+        switch (menu) {
+          case 'A':
+            subUrl = 'a.html'
+            break
+          case 'B':
+            subUrl = 'b.html'
+            break
+          case 'C':
+            subUrl = 'connact.html'
+            break
+          case 'D':
+            subUrl = 'https://juejin.cn/post/7129297642214916133'
+        }
+        document.querySelector('iframe').setAttribute('src', subUrl)
+      }
+    </script>
+  </body>
+</html>
