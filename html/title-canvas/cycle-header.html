@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>头像</title>
+  </head>
+  <body>
+    <style>
+      @font-face {
+        font-family: 'sxy';
+        src: url('https://ziti.51ifonts.com/build/build-font-file/?font_id=5451&words=8bd7,96e8,5c0f,53,4a&format=eof&hex=1');
+        src: url('https://ziti.51ifonts.com/build/build-font-file/?font_id=5451&words=8bd7,96e8,5c0f,53,4a&format=eof#iefix&hex=1') format('embedded-opentype'),
+          url('https://ziti.51ifonts.com/build/build-font-file/?font_id=5451&words=8bd7,96e8,5c0f,53,4a&format=ttf&hex=1') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        font-family: 'sxy';
+      }
+    </style>
+    <div>诗小雨JS</div>
+    <canvas id="cycle-header" width="400px" height="400px"></canvas>
+    <canvas id="cycle-header2" width="100px" height="70px"></canvas>
+    <script>
+      window.onload = function start() {
+        var canvasEl = document.getElementById('cycle-header');
+        var ctx = canvasEl.getContext('2d');
+
+        ctx.beginPath();
+        // ctx.arc(200, 200, 200, 0, Math.PI * 2, false);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 400);
+        ctx.lineTo(400, 400);
+        ctx.lineTo(400, 0);
+        ctx.lineTo(0, 0);
+        ctx.fillStyle = '#ffa940'; //'rgba(255, 169, 64, 0)'; //'#ffa940';
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.shadowBlur = 2;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowColor = '#d9d9d9';
+        ctx.font = '120px sxy';
+        ctx.fillStyle = '#fafafa';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('诗小雨', 200, 200);
+
+        var img = new Image();
+        // canvasEl.toDateURL('image/png');
+        canvasEl.toBlob(function (blob) {
+          console.log(URL.createObjectURL(blob));
+        });
+
+        // 222
+        var canvasEl2 = document.getElementById('cycle-header2');
+        var ctx2 = canvasEl2.getContext('2d');
+
+        ctx2.beginPath();
+        // ctx2.arc(200, 200, 200, 0, Math.PI * 2, false);
+        ctx2.moveTo(0, 0);
+        ctx2.lineTo(0, 70);
+        ctx2.lineTo(100, 70);
+        ctx2.lineTo(100, 0);
+        ctx2.lineTo(0, 0);
+        ctx2.fillStyle = 'rgba(255, 255, 255, 0)'; //'#ffa940';
+        ctx2.fill();
+        ctx2.closePath();
+
+        ctx2.shadowBlur = 2;
+        ctx2.shadowOffsetX = 2;
+        ctx2.shadowOffsetY = 2;
+        ctx2.shadowColor = '#d9d9d9';
+        ctx2.font = '30px sxy';
+        ctx2.fillStyle = '#f2f2f2';
+        ctx2.textAlign = 'center';
+        ctx2.textBaseline = 'middle';
+        ctx2.fillText('诗小雨', 50, 20);
+
+        var img = new Image();
+        // canvasEl2.toDateURL('image/png');
+        canvasEl2.toBlob(function (blob) {
+          console.log(URL.createObjectURL(blob));
+        });
+      };
+    </script>
+  </body>
+</html>

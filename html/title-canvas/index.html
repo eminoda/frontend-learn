@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>头像</title>
+  </head>
+  <body>
+    <style>
+      @font-face {
+        font-family: 'sxy';
+        src: url('./df-fangyuan.ttc');
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        font-family: 'sxy';
+      }
+    </style>
+    <div>诗小雨JS</div>
+    <canvas id="title-canvas" width="900px" height="600px"></canvas>
+    <canvas id="title-canvas2" width="200px" height="200px" style="letter-spacing: 20px"></canvas>
+    <script>
+      window.onload = function start() {
+        var draw1 = function () {
+          var width = 900;
+          var height = 383;
+          var bgColor = '#ff7875';
+          var fontColor = '#fafafa';
+          var canvasEl = document.getElementById('title-canvas');
+          console.log(window.getComputedStyle(document.body)['line-height']);
+          var titleText = '浏览器 EventLoop 事件循环并发模型';
+          var fontSize = '60';
+
+          var ctx = canvasEl.getContext('2d');
+
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(width, 0);
+          ctx.lineTo(width, height);
+          ctx.lineTo(0, height);
+          ctx.lineTo(0, 0);
+          ctx.fillStyle = bgColor; //'rgba(255, 169, 64, 0)'; //'#ffa940';
+          ctx.fill();
+          ctx.closePath();
+
+          ctx.shadowBlur = 2;
+          ctx.shadowOffsetX = 2;
+          ctx.shadowOffsetY = 2;
+          ctx.shadowColor = fontColor;
+          ctx.font = fontSize + 'px sxy';
+          ctx.fillStyle = '#fafafa';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+
+          var fontCount = titleText.length;
+          var currentLineText = '';
+          var lineIndex = 0;
+          var textIndex = 0;
+          var lineTexts = [];
+          while (fontCount >= 0) {
+            if (fontCount == 0) {
+              lineTexts[lineIndex] = currentLineText;
+              break;
+            }
+            var curText = titleText.substring(textIndex, textIndex + 1);
+            if (ctx.measureText(currentLineText + curText).width > width * 0.77) {
+              lineTexts[lineIndex] = currentLineText;
+              currentLineText = curText;
+              lineIndex++;
+            } else {
+              currentLineText = currentLineText + curText;
+            }
+            textIndex++;
+            fontCount--;
+          }
+          if (lineTexts.length == 1) {
+            ctx.textAlign = 'center';
+            ctx.fillText(lineTexts[0], width / 2, height / 2);
+          } else {
+            lineTexts.forEach((text, index) => {
+              ctx.fillText(text, 100, height / 2 - fontSize * (lineTexts.length - 2 - index) * 1.1 - fontSize / 3);
+            });
+          }
+
+          draw2(ctx, height);
+          var img = new Image();
+          // canvasEl.toDateURL('image/png');
+          canvasEl.toBlob(function (blob) {
+            console.log(URL.createObjectURL(blob));
+          });
+        };
+        var draw2 = function (ctx, parentHeight) {
+          var width = 200;
+          var height = 200;
+          var bgColor = '#ff7875';
+          var fontColor = '#fafafa';
+          var titleText = '前端';
+          var titleText2 = '基础';
+          var fontSize = '70';
+
+          // var canvasEl = document.getElementById('title-canvas2');
+          // var ctx = canvasEl.getContext('2d');
+
+          ctx.beginPath();
+          ctx.moveTo(0, 400);
+          ctx.lineTo(width, 400);
+          ctx.lineTo(width, height + 400);
+          ctx.lineTo(0, height + 400);
+          ctx.lineTo(0, 400);
+          ctx.fillStyle = bgColor; //'rgba(255, 169, 64, 0)'; //'#ffa940';
+          ctx.fill();
+          ctx.closePath();
+
+          ctx.shadowBlur = 2;
+          ctx.shadowOffsetX = 2;
+          ctx.shadowOffsetY = 2;
+          ctx.shadowColor = fontColor;
+          ctx.font = fontSize + 'px sxy';
+          ctx.fillStyle = '#fafafa';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          ctx.fillText(titleText, width / 2, 600 - 100 - fontSize / 2);
+          ctx.fillText(titleText2, width / 2, 600 - 100 + fontSize / 2);
+
+          var img = new Image();
+          // canvasEl.toDateURL('image/png');
+          canvasEl.toBlob(function (blob) {
+            console.log(URL.createObjectURL(blob));
+          });
+        };
+        draw1();
+      };
+    </script>
+  </body>
+</html>
