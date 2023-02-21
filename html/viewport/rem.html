@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rem</title>
+  </head>
+  <body>
+    <style>
+      /* 
+        rem 和 px 的换算规则
+        1rem = 16px
+        1px = 1/16 rem = 6.25% * 1rem
+        10px = 62.5% * 1rem
+      */
+      html {
+        font-size: 62.5%;
+      }
+      div {
+        /* font-size: 10rem; */
+      }
+      div.sqr {
+        width: 20rem;
+        height: 20rem;
+        display: inline-block;
+        border: 1px solid #ccc;
+      }
+    </style>
+    <div class="sqr"></div>
+    <div>测试文案</div>
+  </body>
+</html>
