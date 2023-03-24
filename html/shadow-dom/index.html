@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shadow dom</title>
+    <style>
+      .foo-wrap {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>shadow dom title</h1>
+      <div>
+        <div class="foo-wrap">foo</div>
+        <div id="sd"></div>
+      </div>
+    </div>
+    <script>
+      const parentElement = document.getElementById('sd')
+      // 创建虚拟根节点
+      const shadowOpen = parentElement.attachShadow({ mode: 'open' })
+      //   const shadowClosed = parentElement.attachShadow({ mode: 'closed' })
+      //   console.log(shadowClosed)
+
+      const shadowRoot = parentElement.shadowRoot
+      console.log(shadowRoot)
+
+      console.log(shadowOpen === shadowRoot)
+
+      // 创建虚拟节点样式
+      const style = document.createElement('style')
+      style.textContent = `
+          .foo-wrap {
+              color: blue;
+          }
+        `
+      shadowRoot.appendChild(style)
+
+      // 构建虚拟树内的 dom 节点
+      const fooElement = document.createElement('div')
+      fooElement.textContent = '这是 shadow dom 内的一个 dom 节点'
+      fooElement.setAttribute('class', 'foo-wrap')
+      shadowRoot.appendChild(fooElement)
+    </script>
+  </body>
+</html>
