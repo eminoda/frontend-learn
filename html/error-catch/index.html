@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>异常捕获测试</title>
+  </head>
+  <body>
+    <script>
+      //
+      window.addEventListener(
+        'error',
+        (error) => {
+          console.log('window.addEventListener 捕获', error)
+        },
+        true
+      )
+
+      //   // 异常捕获
+      //   window.onerror = function (message, source, lineno, colno, error) {
+      //     console.log('window.onerror 捕获', { message, source, lineno, colno, error })
+      //   }
+      
+      // 正常异常
+      try {
+        // throw new Error('我自己的异常')
+        console.log(abc)
+      } catch (err) {
+        console.log('try-catch 捕获', err.message)
+      }
+      try {
+        // const notdefined,
+      } catch (err) {
+        console.log('try-catch 无能为力', err.message)
+      }
+    </script>
+  </body>
+</html>
