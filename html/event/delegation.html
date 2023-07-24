@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>事件捕获</title>
+  </head>
+  <body>
+    <style>
+      .parent {
+        border: 1px solid #96adfa;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #e9edfa;
+        display: inline-block;
+      }
+      .child,
+      .offspring {
+        border: 1px solid #ffd138;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #ffe794;
+        margin: 10px;
+      }
+      .offspring {
+        border: 1px solid #bc94ff;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #e7d9ff;
+        margin: 10px;
+      }
+      div.child:last-child,
+      div.offspring:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+    <script>
+      const handleClick = function (e) {
+        console.log('click', e.target)
+      }
+    </script>
+    <div class="parent capture" data="parent" onclick="handleClick(event)">
+      这是父区域
+      <div class="child capture" data="child">
+        这是子区域
+        <div class="offspring capture" data="offspring">这是孙区域</div>
+      </div>
+      <div class="child capture" data="child">这是子区域</div>
+    </div>
+    <script></script>
+  </body>
+</html>

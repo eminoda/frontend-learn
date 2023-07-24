@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>冒泡</title>
+  </head>
+  <body>
+    <style>
+      .parent {
+        border: 1px solid #96adfa;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #e9edfa;
+        display: inline-block;
+      }
+      .child,
+      .offspring {
+        border: 1px solid #ffd138;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #ffe794;
+        margin: 10px;
+      }
+      .offspring {
+        border: 1px solid #bc94ff;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: #e7d9ff;
+        margin: 10px;
+      }
+      div.child:last-child,
+      div.offspring:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+    <script>
+      //   const testBabblesEvent = function (node) {
+      //     console.log('事件冒泡', node)
+      //     if (node === 'offspring') {
+      //       event.stopImmediatePropagation()
+      //       // event.stopPropagation()
+      //     }
+      //   }
+    </script>
+    <div class="parent babble" data="parent">
+      这是父区域
+      <div class="child babble" data="child">
+        这是子区域
+        <div class="offspring babble" data="offspring">这是孙区域</div>
+      </div>
+      <div class="child babble" data="child">这是子区域</div>
+    </div>
+    <script>
+      const testBabblesEvent2 = function () {
+        console.log('另一个冒泡事件')
+      }
+      const eles = document.querySelectorAll('.babble')
+      const testBabblesEvent = function (event) {
+        const dataAttr = event.currentTarget.getAttribute('data')
+        console.log('事件捕获', dataAttr)
+        if (dataAttr == 'offspring') {
+          event.stopPropagation()
+        //   event.stopImmediatePropagation()
+        }
+      }
+      eles.forEach((el) => {
+        el.addEventListener('click', testBabblesEvent)
+        el.addEventListener('click', testBabblesEvent2)
+      })
+    </script>
+  </body>
+</html>
